@@ -8,18 +8,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StationOutletResponse {
-	String[] filters;
-	List<Object> outlets;
-	Boolean hasVendorPromotion;
-	Boolean hasMore;
-	Integer page;
-	Integer size;
-	String requestId;
+	public String[] filters;
+	public List<Object> outlets;
+	public Boolean hasVendorPromotion;
+	public Boolean hasMore;
+	public Integer page;
+	public Integer size;
+	public String requestId;
+	public Object error;
+
 
 	public StationOutletResponse() {
 	}
 
-	public StationOutletResponse(String[] filters, List<Object> outlets, Boolean hasVendorPromotion, Boolean hasMore, Integer page, Integer size, String requestId) {
+	public StationOutletResponse(String[] filters, List<Object> outlets, Boolean hasVendorPromotion, Boolean hasMore, Integer page, Integer size, String requestId, Object error) {
 		this.filters = filters;
 		this.outlets = outlets;
 		this.hasVendorPromotion = hasVendorPromotion;
@@ -27,6 +29,7 @@ public class StationOutletResponse {
 		this.page = page;
 		this.size = size;
 		this.requestId = requestId;
+		this.error = error;
 	}
 
 	public String[] getFilters() {
