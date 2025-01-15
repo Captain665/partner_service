@@ -1,0 +1,15 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# An example controller showing a sample home page
+GET     /                           controllers.HomeController.index()
+
+# Partner Outlet Info
+GET     /v2/partner/station/:stationCode/outlets         v2.outlet.OutletController.getStationOutlet(request: Request, stationCode: String, resource: common.resources.RequestResource)
+
+# Partner Menu Info
+GET     /v2/partner/menu             v2.menu.MenuController.getMenuInfo()
+
+# Partner Cart Validate
+POST    /v2/partner/cart/validate    v2.cart.CartController.getCartInfo()
