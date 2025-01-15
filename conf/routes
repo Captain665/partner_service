@@ -9,7 +9,7 @@ GET     /                           controllers.HomeController.index()
 POST     /v2/partner/station/:stationCode/outlets         v2.outlet.OutletController.getStationOutlet(request: Request, stationCode: String, resource: common.resources.RequestResource)
 
 # Partner Menu Info
-GET     /v2/partner/menu             v2.menu.MenuController.getMenuInfo()
+POST     /v2/partner/outlet/:outletId/menu             v2.menu.MenuController.getPartnerMenuInfo(request: Request, outletId: String, resource: common.resources.RequestResource)
 
 # Partner Cart Validate
 POST    /v2/partner/cart/validate    v2.cart.CartController.getCartInfo()
