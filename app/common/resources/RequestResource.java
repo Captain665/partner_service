@@ -83,16 +83,15 @@ public class RequestResource implements QueryStringBindable<RequestResource> {
 	@Override
 	public Optional<RequestResource> bind(String key, Map<String, String[]> data) {
 		try {
-			// Create a new instance of RequestResource
+
 			RequestResource resource = new RequestResource();
 
-			// Map query parameters to fields
 			resource.setStationCode(getFirstValue(data, "stationCode"));
 			resource.setDate(getFirstValue(data, "date"));
 			resource.setTime(getFirstValue(data, "time"));
 			resource.setRequestId(getFirstValue(data, "requestId"));
-			resource.setSize(parseInteger(getFirstValue(data, "size")));
-			resource.setPage(parseInteger(getFirstValue(data, "page")));
+			resource.setSize(parseInteger(getFirstValue(data, "size") == null ? "20" : getFirstValue(data, "size")));
+			resource.setPage(parseInteger(getFirstValue(data, "page") == null ? "1" : getFirstValue(data, "page")));
 			resource.setOutletId(getFirstValue(data, "outletId"));
 			resource.setPartnerName(getFirstValue(data, "partnerName"));
 
@@ -125,7 +124,7 @@ public class RequestResource implements QueryStringBindable<RequestResource> {
 			return value != null ? Integer.parseInt(value) : null;
 		} catch (NumberFormatException e) {
 			return null;
-		}	
+		}
 	}
 
 	@Override
