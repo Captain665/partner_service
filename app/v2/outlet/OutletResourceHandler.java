@@ -5,22 +5,16 @@ import common.resources.RequestResource;
 import common.response.StationOutletResponse;
 import jakarta.inject.Inject;
 import org.apache.commons.collections4.MapUtils;
-import org.hibernate.Internal;
 import play.Logger;
-import play.libs.Json;
-import play.mvc.Result;
 import v2.aggregatorDataFetch.AggregatorDataFetchRepository;
 import v2.partnerService.GetService;
 import v2.partnerService.PostService;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static play.mvc.Results.badRequest;
-import static play.mvc.Results.ok;
 
 public class OutletResourceHandler {
 
@@ -37,7 +31,7 @@ public class OutletResourceHandler {
 		this.aggregatorDataFetchRepository = aggregatorDataFetchRepository;
 	}
 
-	public CompletionStage<StationOutletResponse> getPartnerOutlets(Long partnerId, Long requestId, RequestResource requestResource, String stationCode, Map<String, String> pathVariables) {
+	public CompletionStage<StationOutletResponse> getPartnerOutlets(Long partnerId, Long requestId, RequestResource requestResource, Map<String, String> pathVariables) {
 		return aggregatorDataFetchRepository.getData(partnerId)
 				.thenComposeAsync(aggregatorDataFetchDetail -> {
 					logger.info("[" + requestId + "] " + " response : " + aggregatorDataFetchDetail);

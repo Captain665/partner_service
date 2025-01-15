@@ -6,7 +6,6 @@ import play.Logger;
 import play.libs.Json;
 import play.mvc.Http;
 import play.mvc.Result;
-import v2.aggregatorDataFetch.AggregatorDataFetchRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,13 +36,13 @@ public class OutletController {
 		Map<String, String> pathVariable = new HashMap<>();
 		pathVariable.put("#STATION_CODE#", stationCode);
 
-		return resourceHandler.getPartnerOutlets(partnerId, request.id(), requestResource, stationCode, pathVariable)
+		return resourceHandler.getPartnerOutlets(partnerId, request.id(), requestResource, pathVariable)
 				.thenApplyAsync(
 						partnerResponse -> {
 							if (partnerResponse != null) {
 								return ok(Json.toJson(partnerResponse));
 							}
-							return badRequest(Json.toJson("bad error "));
+							return badRequest(Json.toJson("oops something went wrong"));
 						});
 
 	}

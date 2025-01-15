@@ -1,6 +1,5 @@
 package v2.partnerService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import common.model.AggregatorDataFetchDetail;
 import common.resources.RequestResource;
 import org.asynchttpclient.AsyncHttpClient;
