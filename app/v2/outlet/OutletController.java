@@ -18,17 +18,15 @@ import static play.mvc.Results.ok;
 public class OutletController {
 
 	private final Logger.ALogger logger = Logger.of("v2.outletController");
-	private final PartnerOutletService partnerOutletService;
-	private final AggregatorDataFetchRepository aggregatorDataFetchRepository;
+	private final OutletResourceHandler resourceHandler;
 
 	@Inject
-	public OutletController(PartnerOutletService partnerOutletService, AggregatorDataFetchRepository aggregatorDataFetchRepository) {
-		this.partnerOutletService = partnerOutletService;
-		this.aggregatorDataFetchRepository = aggregatorDataFetchRepository;
+	public OutletController(OutletResourceHandler resourceHandler) {
+		this.resourceHandler = resourceHandler;
 	}
 
 	public CompletionStage<Result> getStationOutlet(Http.Request request, String stationCode, RequestResource requestResource) {
-		logger.info("request station code " + stationCode + " requestResource : " + requestResource);
+		logger.info("[" + request.id() + "] " + "requested station " + stationCode + " filters : " + requestResource);
 		requestResource.setStationCode(stationCode);
 		Long partnerId = 0L;
 		if (requestResource.getPartnerName().equalsIgnoreCase("ZOMATO")) {
@@ -36,21 +34,18 @@ public class OutletController {
 		} else if (requestResource.getPartnerName().equalsIgnoreCase("SWIGGY")) {
 			partnerId = 49300798L;
 		}
+		Map<String, String> pathVariable = new HashMap<>();
+		pathVariable.put("#STATION_CODE#", stationCode);
 
-		return aggregatorDataFetchRepository.getData(partnerId)
-				.thenComposeAsync(aggregatorDataFetchDetail -> {
-					logger.info("aggregatorDataFetchDetail : ", aggregatorDataFetchDetail.toString());
-					Map<String, String> pathVariable = new HashMap<>();
-					pathVariable.put("#STATION_CODE#", stationCode);
-					return partnerOutletService.partnerStationOutlet(request.id(), aggregatorDataFetchDetail, requestResource, pathVariable)
-							.thenApplyAsync(partnerOutletService -> {
-								if (partnerOutletService.isPresent()) {
-									logger.info("[" + request.id() + "] " + " response : " + partnerOutletService.get());
-									return ok(Json.toJson(partnerOutletService.get()));
-								}
-								return badRequest(Json.toJson("Oops something went wrong"));
-							});
-				});
+		return resourceHandler.getPartnerOutlets(partnerId, request.id(), requestResource, stationCode, pathVariable)
+				.thenApplyAsync(
+						partnerResponse -> {
+							if (partnerResponse != null) {
+								return ok(Json.toJson(partnerResponse));
+							}
+							return badRequest(Json.toJson("bad error "));
+						});
+
 	}
 
 }
