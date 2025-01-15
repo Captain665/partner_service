@@ -28,11 +28,16 @@ public class MenuController {
 	public CompletionStage<Result> getPartnerMenuInfo(Http.Request request, String outletId, RequestResource requestResource) {
 		logger.info("[" + request.id() + "] " + "requested outlet_id " + outletId + " requestResource : " + requestResource.toString());
 		requestResource.setOutletId(outletId);
-		Long partnerId = 0L;
+		if (requestResource.getPartnerName() == null) {
+			return supplyAsync(() -> badRequest(Json.toJson("partnerName should not null")));
+		}
+		Long partnerId = null;
 		if (requestResource.getPartnerName().equalsIgnoreCase("ZOMATO")) {
 			partnerId = 49196949L;
 		} else if (requestResource.getPartnerName().equalsIgnoreCase("SWIGGY")) {
 			partnerId = 49300798L;
+		} else {
+			return supplyAsync(() -> badRequest(Json.toJson("partnerName is required")));
 		}
 		Map<String, String> pathVariable = new HashMap<>();
 		pathVariable.put("#OUTLET_ID#", outletId);
