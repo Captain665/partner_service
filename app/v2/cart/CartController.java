@@ -13,4 +13,5 @@ public class CartController {
 	public CompletionStage<Result> getCartInfo() {
 		return supplyAsync(() -> ok("test"));
 	}
+
 }
