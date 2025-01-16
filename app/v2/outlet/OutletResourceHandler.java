@@ -55,7 +55,7 @@ public class OutletResourceHandler {
 									return null;
 								});
 					} else if (requestType.equalsIgnoreCase("POST")) {
-						return postService.getInfo(requestId, aggregatorDataFetchDetail, requestResource, url)
+						return postService.getInfo(requestId, aggregatorDataFetchDetail, requestResource, url, false)
 								.thenApplyAsync(response -> {
 									if (response.isPresent()) {
 										try {

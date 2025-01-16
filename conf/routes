@@ -12,4 +12,4 @@ POST     /v2/partner/station/:stationCode/outlets         v2.outlet.OutletContro
 POST     /v2/partner/outlet/:outletId/menu             v2.menu.MenuController.getPartnerMenuInfo(request: Request, outletId: String, resource: common.resources.RequestResource)
 
 # Partner Cart Validate
-POST    /v2/partner/cart/validate    v2.cart.CartController.getCartInfo()
+POST    /v2/partner/:partnerName/cart/validate    v2.cart.CartController.getCartInfo(request: Request, partnerName: String)

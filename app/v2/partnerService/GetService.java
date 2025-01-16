@@ -60,9 +60,7 @@ public class GetService {
 	}
 
 	private void addQueryParams(BoundRequestBuilder requestBuilder, Object body) {
-		logger.info("body " + body.toString());
 		if (body instanceof RequestResource requestResource) {
-			logger.info("page " + requestResource.getPage());
 			requestBuilder.addQueryParam("stationCode", requestResource.getStationCode());
 			requestBuilder.addQueryParam("date", requestResource.getDate());
 			requestBuilder.addQueryParam("time", requestResource.getTime());

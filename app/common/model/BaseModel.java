@@ -1,8 +1,9 @@
 package common.model;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @MappedSuperclass
 public class BaseModel implements Serializable {
@@ -14,18 +15,14 @@ public class BaseModel implements Serializable {
 	protected Long id;
 
 	@Column(name = "created_at")
-	@Temporal(TemporalType.TIMESTAMP)
-	protected Date createdAt;
+	protected LocalDateTime createdAt;
 
-//	@Size(max = 255)
 	@Column(name = "created_by", length = 256)
 	protected String createdBy;
 
 	@Column(name = "updated_at")
-	@Temporal(TemporalType.TIMESTAMP)
-	protected Date updatedAt;
+	protected LocalDateTime updatedAt;
 
-//	@Size(max = 255)
 	@Column(name = "updated_by", length = 256)
 	protected String updatedBy;
 
@@ -38,11 +35,11 @@ public class BaseModel implements Serializable {
 		this.id = id;
 	}
 
-	public Date getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 
@@ -54,11 +51,11 @@ public class BaseModel implements Serializable {
 		this.createdBy = createdBy;
 	}
 
-	public Date getUpdatedAt() {
+	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
+	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
