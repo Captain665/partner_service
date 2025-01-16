@@ -33,7 +33,7 @@ public class OrderConfirmController {
 		} else if (partnerName.equalsIgnoreCase("SWIGGY")) {
 			partnerId = 49300798L;
 		} else {
-			return supplyAsync(() -> badRequest(Json.toJson("partnerName is requir	ed")));
+			return supplyAsync(() -> badRequest(Json.toJson("partnerName is required")));
 		}
 
 		return resourceHandler.orderConfirmByPartner(partnerId, request.id(), json)
