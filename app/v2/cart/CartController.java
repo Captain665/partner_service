@@ -14,7 +14,7 @@ import static play.mvc.Results.badRequest;
 import static play.mvc.Results.ok;
 
 public class CartController {
-	private final Logger.ALogger logger = Logger.of("v2.outletController");
+	private final Logger.ALogger logger = Logger.of("v2.cartController");
 	private final CartResourceHandler resourceHandler;
 
 	@Inject
