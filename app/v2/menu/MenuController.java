@@ -6,6 +6,7 @@ import play.Logger;
 import play.libs.Json;
 import play.mvc.Http;
 import play.mvc.Result;
+import v2.partnerService.PartnerInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,27 +19,25 @@ import static play.mvc.Results.ok;
 public class MenuController {
 
 	private final MenuResourceHandler resourceHandler;
+	private final PartnerInfo partnerInfo;
 	private final Logger.ALogger logger = Logger.of("v2.outletController");
 
 	@Inject
-	public MenuController(MenuResourceHandler resourceHandler) {
+	public MenuController(MenuResourceHandler resourceHandler, PartnerInfo partnerInfo) {
 		this.resourceHandler = resourceHandler;
+		this.partnerInfo = partnerInfo;
 	}
 
 	public CompletionStage<Result> getPartnerMenuInfo(Http.Request request, String outletId, RequestResource requestResource) {
 		logger.info("[" + request.id() + "] " + "requested outlet_id " + outletId + " requestResource : " + requestResource.toString());
 		requestResource.setOutletId(outletId);
-		if (requestResource.getPartnerName() == null) {
-			return supplyAsync(() -> badRequest(Json.toJson("partnerName should not null")));
-		}
-		Long partnerId = null;
-		if (requestResource.getPartnerName().equalsIgnoreCase("ZOMATO")) {
-			partnerId = 49196949L;
-		} else if (requestResource.getPartnerName().equalsIgnoreCase("SWIGGY")) {
-			partnerId = 49300798L;
-		} else {
+
+		Long partnerId = partnerInfo.getPartnerInfo(requestResource.getPartnerName() == null ? "" : requestResource.getPartnerName());
+		if (partnerId == null) {
+			logger.info("[" + request.id() + "] " + " error : " + "partnerName is required");
 			return supplyAsync(() -> badRequest(Json.toJson("partnerName is required")));
 		}
+
 		Map<String, String> pathVariable = new HashMap<>();
 		pathVariable.put("#OUTLET_ID#", outletId);
 

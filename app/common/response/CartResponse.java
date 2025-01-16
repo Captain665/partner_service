@@ -52,4 +52,15 @@ public class CartResponse {
 	public void setError(Object error) {
 		this.error = error;
 	}
+
+
+	@Override
+	public String toString() {
+		return "CartResponse{" +
+				"cart=" + cart +
+				", coupon='" + coupon + '\'' +
+				", promotions=" + promotions +
+				", error=" + error +
+				'}';
+	}
 }
