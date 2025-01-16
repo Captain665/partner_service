@@ -25,7 +25,7 @@ public class OrderConfirmResourceHandler {
 	}
 
 
-	public CompletionStage<OrderConfirmResponse> orderConfirmByPartner(Long partnerId, Long requestId, Object body) {
+	public CompletionStage<CartResponse> orderConfirmByPartner(Long partnerId, Long requestId, Object body) {
 
 		return aggregatorDataFetchRepository.getData(partnerId)
 				.thenComposeAsync(aggregatorDataFetchDetail -> {
@@ -34,7 +34,7 @@ public class OrderConfirmResourceHandler {
 							.thenApplyAsync(partnerResponse -> {
 								if (partnerResponse.isPresent()) {
 									try {
-										return mapper.readValue(partnerResponse.get().toString(), OrderConfirmResponse.class);
+										return mapper.readValue(partnerResponse.get().toString(), CartResponse.class);
 									} catch (IOException e) {
 										return null;
 									}
