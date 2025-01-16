@@ -11,5 +11,8 @@ POST     /v2/partner/station/:stationCode/outlets         v2.outlet.OutletContro
 # Partner Menu Info
 POST     /v2/partner/outlet/:outletId/menu             v2.menu.MenuController.getPartnerMenuInfo(request: Request, outletId: String, resource: common.resources.RequestResource)
 
-# Partner Cart Validate
-POST    /v2/partner/cart/validate    v2.cart.CartController.getCartInfo()
+# Partner Cart Validation
+POST    /v2/partner/:partnerName/cart/validate    v2.cart.CartController.getCartInfo(request: Request, partnerName: String)
+
+# Partner Order Confirm
+POST    /v2/partner/:partnerName/order/confirm    v2.orderConfirm.OrderConfirmController.getConfirmInfo(request: Request, partnerName: String)

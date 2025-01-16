@@ -8,6 +8,7 @@ import common.response.StationOutletResponse;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.BoundRequestBuilder;
 import play.Logger;
+import play.libs.Json;
 
 import java.time.Duration;
 import java.util.Map;
@@ -23,16 +24,17 @@ public class PostService {
 	private final Logger.ALogger logger = Logger.of("v2.partnerService.postService");
 	private final AsyncHttpClient httpClient = asyncHttpClient(config().setRequestTimeout(Duration.ofMillis(3000)));
 
-	public CompletionStage<Optional<?>> getInfo(Long requestId, AggregatorDataFetchDetail aggregatorDataFetchDetail, Object body, AtomicReference<String> url) {
+	public CompletionStage<Optional<?>> getInfo(Long requestId, AggregatorDataFetchDetail aggregatorDataFetchDetail, Object body, AtomicReference<String> url, Boolean isJson) {
 		BoundRequestBuilder requestBuilder = null;
 
 		GsonBuilder gsonBuilder = new GsonBuilder();
-		String jsonString = gsonBuilder.create().toJson(body);
+		String jsonString = isJson ? body.toString() : gsonBuilder.create().toJson(body);
 		requestBuilder = httpClient.preparePost(url.get());
 		addHeaders(requestBuilder,
 				Map.of("content-type", "application/json", aggregatorDataFetchDetail.getAuthKey(),
 						aggregatorDataFetchDetail.getAuthValue()));
 		addQueryParams(requestBuilder, body);
+
 		return requestBuilder
 				.setBody(jsonString)
 				.execute()
@@ -64,9 +66,8 @@ public class PostService {
 	}
 
 	private void addQueryParams(BoundRequestBuilder requestBuilder, Object body) {
-		logger.info("body " + body.toString());
 		if (body instanceof RequestResource requestResource) {
-			logger.info("page " + requestResource.getPage());
+			logger.info("query param is also running ");
 			requestBuilder.addQueryParam("stationCode", requestResource.getStationCode());
 			requestBuilder.addQueryParam("date", requestResource.getDate());
 			requestBuilder.addQueryParam("time", requestResource.getTime());

@@ -49,7 +49,7 @@ public class OutletController {
 							if (partnerResponse != null) {
 								return ok(Json.toJson(partnerResponse));
 							}
-							return badRequest(Json.toJson("oops something went wrong"));
+							return badRequest(Json.toJson("oops, something went wrong"));
 						});
 
 	}
