@@ -35,7 +35,6 @@ public class PostService {
 						aggregatorDataFetchDetail.getAuthValue()));
 		addQueryParams(requestBuilder, body);
 
-		logger.info("url " + url.get());
 		return requestBuilder
 				.setBody(jsonString)
 				.execute()
@@ -44,7 +43,6 @@ public class PostService {
 					logger.info("[{}] Aggregator Client failed to get any response ", requestId);
 					return null;
 				}).thenApplyAsync(response -> {
-					logger.info("response -> " + response.getResponseBody());
 					if (response == null || response.getStatusCode() >= 400) {
 						logger.info(
 								"[{}] Got failure response from Aggregator API with status code {} for url {}",
