@@ -8,6 +8,8 @@ import play.mvc.Http;
 import play.mvc.Result;
 import v2.partnerService.PartnerInfo;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -35,7 +37,11 @@ public class CartController {
 			return supplyAsync(() -> badRequest(Json.toJson("partnerName is required")));
 		}
 
-		return resourceHandler.cartValidateByPartner(partnerId, request.id(), json)
+		Map<String, String> pathVariable = new HashMap<>();
+		pathVariable.put("#CART_ID#", request.queryString("cart_id").isPresent() ?
+				request.queryString("cart_id").get() : "");
+
+		return resourceHandler.cartValidateByPartner(partnerId, request, json, pathVariable)
 				.thenApplyAsync(
 						response -> {
 							if (response != null) {

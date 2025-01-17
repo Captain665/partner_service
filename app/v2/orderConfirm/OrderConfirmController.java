@@ -8,6 +8,8 @@ import play.mvc.Http;
 import play.mvc.Result;
 import v2.partnerService.PartnerInfo;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -37,7 +39,7 @@ public class OrderConfirmController {
 			return supplyAsync(() -> badRequest(Json.toJson("partnerName is required")));
 		}
 
-		return resourceHandler.orderConfirmByPartner(partnerId, request.id(), json)
+		return resourceHandler.orderConfirmByPartner(partnerId, request, json)
 				.thenApplyAsync(response -> {
 					if (response != null) {
 						logger.info("[" + request.id() + "] " + " response : " + response);

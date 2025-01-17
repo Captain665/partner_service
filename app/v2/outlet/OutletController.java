@@ -41,7 +41,7 @@ public class OutletController {
 		Map<String, String> pathVariable = new HashMap<>();
 		pathVariable.put("#STATION_CODE#", stationCode);
 
-		return resourceHandler.getPartnerOutlets(partnerId, request.id(), requestResource, pathVariable)
+		return resourceHandler.getPartnerOutlets(partnerId, request, requestResource, pathVariable)
 				.thenApplyAsync(
 						partnerResponse -> {
 							if (partnerResponse != null) {

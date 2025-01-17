@@ -41,7 +41,7 @@ public class MenuController {
 		Map<String, String> pathVariable = new HashMap<>();
 		pathVariable.put("#OUTLET_ID#", outletId);
 
-		return resourceHandler.getPartnerMenuInfo(partnerId, request.id(), requestResource, pathVariable)
+		return resourceHandler.getPartnerMenuInfo(partnerId, request, requestResource, pathVariable)
 				.thenApplyAsync(response -> {
 					if (response != null) {
 						return ok(Json.toJson(response));

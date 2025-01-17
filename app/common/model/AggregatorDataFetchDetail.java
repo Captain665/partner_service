@@ -193,6 +193,14 @@ public class AggregatorDataFetchDetail extends BaseModel {
 		this.orderInitiateUrl = orderInitiateUrl;
 	}
 
+	public Long getVendorId() {
+		return vendorId;
+	}
+
+	public void setVendorId(Long vendorId) {
+		this.vendorId = vendorId;
+	}
+
 	@Override
 	public String toString() {
 		return "AggregatorDataFetchDetail{" +
