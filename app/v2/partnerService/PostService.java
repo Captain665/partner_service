@@ -14,13 +14,12 @@ import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.asynchttpclient.Dsl.asyncHttpClient;
-import static org.asynchttpclient.Dsl.config;
+import static org.asynchttpclient.Dsl.*;
 
 public class PostService {
 
 	private final Logger.ALogger logger = Logger.of("v2.partnerService.postService");
-	private final AsyncHttpClient httpClient = asyncHttpClient(config().setRequestTimeout(Duration.ofMillis(3000)));
+	private final AsyncHttpClient httpClient = asyncHttpClient(config().setRequestTimeout(Duration.ofMillis(5000)));
 
 	public CompletionStage<Optional<?>> getInfo(Http.Request request, AggregatorDataFetchDetail aggregatorDataFetchDetail, Object body, AtomicReference<String> url, Boolean isJson) {
 		BoundRequestBuilder requestBuilder = null;
@@ -28,6 +27,7 @@ public class PostService {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		String jsonString = isJson ? body.toString() : gsonBuilder.create().toJson(body);
 		requestBuilder = httpClient.preparePost(url.get());
+
 		if (aggregatorDataFetchDetail.getVendorId() == 1190) {
 			addHeaders(requestBuilder,
 					Map.of("content-type", "application/json",
@@ -51,20 +51,21 @@ public class PostService {
 				.toCompletableFuture()
 				.exceptionally(throwable -> {
 					logger.info("[{}] Aggregator Client failed to get any response ", request.id());
+					logger.info("exception " + throwable);
 					return null;
 				}).thenApplyAsync(response -> {
-					if (response == null || response.getStatusCode() >= 400) {
+					logger.info("response " + response);
+					if ((response == null || response.getStatusCode() >= 400) && aggregatorDataFetchDetail.getVendorId() != 1190) {
 						logger.info(
 								"[{}] Got failure response from Aggregator API with status code {} for url {}",
 								request.id(),
 								response != null ? response.getStatusCode() : 0,
 								url.get());
-						logger.info("post service response : " + response.getResponseBody());
 						return Optional.empty();
 					}
 					try {
 						logger.info(
-								"[{}] Received outlet list Response: {} ", request.id(),
+								"[{}] Received Aggregator Response: {} ", request.id(),
 								response.getResponseBody());
 						return Optional.of(response.getResponseBody());
 					} catch (Exception e) {
@@ -90,4 +91,5 @@ public class PostService {
 	private void addHeaders(BoundRequestBuilder requestBuilder, Map<String, String> headers) {
 		headers.forEach(requestBuilder::addHeader);
 	}
+
 }
