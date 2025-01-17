@@ -7,6 +7,7 @@ import common.response.StationOutletResponse;
 import jakarta.inject.Inject;
 import org.apache.commons.collections4.MapUtils;
 import play.Logger;
+import play.mvc.Http;
 import v2.aggregatorDataFetch.AggregatorDataFetchRepository;
 import v2.partnerService.GetService;
 import v2.partnerService.PostService;
@@ -29,7 +30,7 @@ public class MenuResourceHandler {
 		this.aggregatorDataFetchRepository = aggregatorDataFetchRepository;
 	}
 
-	public CompletionStage<MenuResponse> getPartnerMenuInfo(Long partnerId, Long requestId, RequestResource requestResource, Map<String, String> pathVariables) {
+	public CompletionStage<MenuResponse> getPartnerMenuInfo(Long partnerId, Http.Request request, RequestResource requestResource, Map<String, String> pathVariables) {
 		return aggregatorDataFetchRepository.getData(partnerId).thenComposeAsync(aggregatorDataFetchDetail -> {
 			String[] fullOutletURL = aggregatorDataFetchDetail.getMenuUrl().split(" ");
 			String requestType = fullOutletURL[0];
@@ -38,7 +39,7 @@ public class MenuResourceHandler {
 				pathVariables.forEach((name, value) -> url.set(url.get().replace(name, value)));
 			}
 			if (requestType.equalsIgnoreCase("GET")) {
-				return getService.getInfo(requestId, aggregatorDataFetchDetail, requestResource, url)
+				return getService.getInfo(request.id(), aggregatorDataFetchDetail, requestResource, url)
 						.thenApplyAsync(response -> {
 							if (response.isPresent()) {
 								try {
@@ -50,7 +51,7 @@ public class MenuResourceHandler {
 							return null;
 						});
 			} else if (requestType.equalsIgnoreCase("POST")) {
-				return postService.getInfo(requestId, aggregatorDataFetchDetail, requestResource, url,false)
+				return postService.getInfo(request, aggregatorDataFetchDetail, requestResource, url, false)
 						.thenApplyAsync(response -> {
 							if (response.isPresent()) {
 								try {

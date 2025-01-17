@@ -6,6 +6,7 @@ import common.resources.RequestResource;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.BoundRequestBuilder;
 import play.Logger;
+import play.mvc.Http;
 
 import java.time.Duration;
 import java.util.Map;
@@ -21,15 +22,27 @@ public class PostService {
 	private final Logger.ALogger logger = Logger.of("v2.partnerService.postService");
 	private final AsyncHttpClient httpClient = asyncHttpClient(config().setRequestTimeout(Duration.ofMillis(3000)));
 
-	public CompletionStage<Optional<?>> getInfo(Long requestId, AggregatorDataFetchDetail aggregatorDataFetchDetail, Object body, AtomicReference<String> url, Boolean isJson) {
+	public CompletionStage<Optional<?>> getInfo(Http.Request request, AggregatorDataFetchDetail aggregatorDataFetchDetail, Object body, AtomicReference<String> url, Boolean isJson) {
 		BoundRequestBuilder requestBuilder = null;
 
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		String jsonString = isJson ? body.toString() : gsonBuilder.create().toJson(body);
 		requestBuilder = httpClient.preparePost(url.get());
-		addHeaders(requestBuilder,
-				Map.of("content-type", "application/json", aggregatorDataFetchDetail.getAuthKey(),
-						aggregatorDataFetchDetail.getAuthValue()));
+		if (aggregatorDataFetchDetail.getVendorId() == 1190) {
+			addHeaders(requestBuilder,
+					Map.of("content-type", "application/json",
+							aggregatorDataFetchDetail.getAuthKey(), aggregatorDataFetchDetail.getAuthValue(),
+							"storeId", request.header("storeId").isPresent() ? request.header("storeId").get() : "",
+							"client_token", request.header("client_token").isPresent() ? request.header("client_token").get() : "",
+							"client_type", request.header("client_type").isPresent() ? request.header("client_type").get() : "",
+							"deliveryType", request.header("deliveryType").isPresent() ? request.header("deliveryType").get() : "",
+							"userId", request.header("userId").isPresent() ? request.header("userId").get() : ""
+					));
+		} else {
+			addHeaders(requestBuilder,
+					Map.of("content-type", "application/json", aggregatorDataFetchDetail.getAuthKey(),
+							aggregatorDataFetchDetail.getAuthValue()));
+		}
 		addQueryParams(requestBuilder, body);
 
 		return requestBuilder
@@ -37,13 +50,13 @@ public class PostService {
 				.execute()
 				.toCompletableFuture()
 				.exceptionally(throwable -> {
-					logger.info("[{}] Aggregator Client failed to get any response ", requestId);
+					logger.info("[{}] Aggregator Client failed to get any response ", request.id());
 					return null;
 				}).thenApplyAsync(response -> {
 					if (response == null || response.getStatusCode() >= 400) {
 						logger.info(
 								"[{}] Got failure response from Aggregator API with status code {} for url {}",
-								requestId,
+								request.id(),
 								response != null ? response.getStatusCode() : 0,
 								url.get());
 						logger.info("post service response : " + response.getResponseBody());
@@ -51,12 +64,12 @@ public class PostService {
 					}
 					try {
 						logger.info(
-								"[{}] Received outlet list Response: {} ", requestId,
+								"[{}] Received outlet list Response: {} ", request.id(),
 								response.getResponseBody());
 						return Optional.of(response.getResponseBody());
 					} catch (Exception e) {
 						logger.error("[{}] Exception while parsing Aggregator Response: {}",
-								requestId,
+								request.id(),
 								e.getMessage());
 						return Optional.empty();
 					}

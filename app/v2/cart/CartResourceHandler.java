@@ -5,6 +5,7 @@ import common.response.CartResponse;
 import jakarta.inject.Inject;
 import org.apache.commons.collections4.MapUtils;
 import play.Logger;
+import play.mvc.Http;
 import v2.aggregatorDataFetch.AggregatorDataFetchRepository;
 import v2.partnerService.PostService;
 
@@ -25,7 +26,7 @@ public class CartResourceHandler {
 		this.postService = postService;
 	}
 
-	public CompletionStage<CartResponse> cartValidateByPartner(Long partnerId, Long requestId, Object body, Map<String, String> pathVariables) {
+	public CompletionStage<CartResponse> cartValidateByPartner(Long partnerId, Http.Request request, Object body, Map<String, String> pathVariables) {
 		return aggregatorDataFetchRepository.getData(partnerId)
 				.thenComposeAsync(aggregatorDataFetchDetail -> {
 					AtomicReference<String> url = new AtomicReference<>(aggregatorDataFetchDetail.getCartValidateUrl());
@@ -34,7 +35,7 @@ public class CartResourceHandler {
 						pathVariables.forEach((name, value) -> url.set(url.get().replace(name, value)));
 					}
 
-					return postService.getInfo(requestId, aggregatorDataFetchDetail, body, url, true)
+					return postService.getInfo(request, aggregatorDataFetchDetail, body, url, true)
 							.thenApplyAsync(partnerResponse -> {
 								if (partnerResponse.isPresent()) {
 									try {

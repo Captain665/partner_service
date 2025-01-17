@@ -3,6 +3,7 @@ package v2.orderConfirm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import common.response.CartResponse;
 import jakarta.inject.Inject;
+import play.mvc.Http;
 import v2.aggregatorDataFetch.AggregatorDataFetchRepository;
 import v2.partnerService.PostService;
 
@@ -23,12 +24,12 @@ public class OrderConfirmResourceHandler {
 	}
 
 
-	public CompletionStage<CartResponse> orderConfirmByPartner(Long partnerId, Long requestId, Object body) {
+	public CompletionStage<CartResponse> orderConfirmByPartner(Long partnerId, Http.Request request, Object body) {
 
 		return aggregatorDataFetchRepository.getData(partnerId)
 				.thenComposeAsync(aggregatorDataFetchDetail -> {
 					AtomicReference<String> url = new AtomicReference<>(aggregatorDataFetchDetail.getOrderConfirmUrl());
-					return postService.getInfo(requestId, aggregatorDataFetchDetail, body, url, true)
+					return postService.getInfo(request, aggregatorDataFetchDetail, body, url, true)
 							.thenApplyAsync(partnerResponse -> {
 								if (partnerResponse.isPresent()) {
 									try {

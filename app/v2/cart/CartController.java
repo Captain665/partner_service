@@ -41,7 +41,7 @@ public class CartController {
 		pathVariable.put("#CART_ID#", request.queryString("cart_id").isPresent() ?
 				request.queryString("cart_id").get() : "");
 
-		return resourceHandler.cartValidateByPartner(partnerId, request.id(), json, pathVariable)
+		return resourceHandler.cartValidateByPartner(partnerId, request, json, pathVariable)
 				.thenApplyAsync(
 						response -> {
 							if (response != null) {

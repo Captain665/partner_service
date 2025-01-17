@@ -6,6 +6,7 @@ import common.response.StationOutletResponse;
 import jakarta.inject.Inject;
 import org.apache.commons.collections4.MapUtils;
 import play.Logger;
+import play.mvc.Http;
 import v2.aggregatorDataFetch.AggregatorDataFetchRepository;
 import v2.partnerService.GetService;
 import v2.partnerService.PostService;
@@ -31,10 +32,10 @@ public class OutletResourceHandler {
 		this.aggregatorDataFetchRepository = aggregatorDataFetchRepository;
 	}
 
-	public CompletionStage<StationOutletResponse> getPartnerOutlets(Long partnerId, Long requestId, RequestResource requestResource, Map<String, String> pathVariables) {
+	public CompletionStage<StationOutletResponse> getPartnerOutlets(Long partnerId, Http.Request request, RequestResource requestResource, Map<String, String> pathVariables) {
 		return aggregatorDataFetchRepository.getData(partnerId)
 				.thenComposeAsync(aggregatorDataFetchDetail -> {
-					logger.info("[" + requestId + "] " + " response : " + aggregatorDataFetchDetail);
+					logger.info("[" + request.id() + "] " + " response : " + aggregatorDataFetchDetail);
 
 					String[] fullOutletURL = aggregatorDataFetchDetail.getOutletUrl().split(" ");
 					String requestType = fullOutletURL[0];
@@ -43,7 +44,7 @@ public class OutletResourceHandler {
 						pathVariables.forEach((name, value) -> url.set(url.get().replace(name, value)));
 					}
 					if (requestType.equalsIgnoreCase("GET")) {
-						return getService.getInfo(requestId, aggregatorDataFetchDetail, requestResource, url)
+						return getService.getInfo(request.id(), aggregatorDataFetchDetail, requestResource, url)
 								.thenApplyAsync(response -> {
 									if (response.isPresent()) {
 										try {
@@ -55,7 +56,7 @@ public class OutletResourceHandler {
 									return null;
 								});
 					} else if (requestType.equalsIgnoreCase("POST")) {
-						return postService.getInfo(requestId, aggregatorDataFetchDetail, requestResource, url, false)
+						return postService.getInfo(request, aggregatorDataFetchDetail, requestResource, url, false)
 								.thenApplyAsync(response -> {
 									if (response.isPresent()) {
 										try {
