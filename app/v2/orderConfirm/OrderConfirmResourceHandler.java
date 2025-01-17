@@ -27,16 +27,12 @@ public class OrderConfirmResourceHandler {
 	}
 
 
-	public CompletionStage<?> orderConfirmByPartner(Long partnerId, Http.Request request, Object body, Map<String, String> pathVariables) {
+	public CompletionStage<?> orderConfirmByPartner(Long partnerId, Http.Request request, Object body) {
 
 		return aggregatorDataFetchRepository.getData(partnerId)
 				.thenComposeAsync(aggregatorDataFetchDetail -> {
 
 					AtomicReference<String> url = new AtomicReference<>(aggregatorDataFetchDetail.getOrderConfirmUrl());
-
-					if (!MapUtils.isEmpty(pathVariables)) {
-						pathVariables.forEach((name, value) -> url.set(url.get().replace(name, value)));
-					}
 
 					return postService.getInfo(request, aggregatorDataFetchDetail, body, url, true)
 							.thenApplyAsync(partnerResponse -> {
