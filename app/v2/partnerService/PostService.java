@@ -28,21 +28,7 @@ public class PostService {
 		String jsonString = isJson ? body.toString() : gsonBuilder.create().toJson(body);
 		requestBuilder = httpClient.preparePost(url.get());
 
-		if (aggregatorDataFetchDetail.getVendorId() == 1190) {
-			addHeaders(requestBuilder,
-					Map.of("content-type", "application/json",
-							aggregatorDataFetchDetail.getAuthKey(), aggregatorDataFetchDetail.getAuthValue(),
-							"storeId", request.header("storeId").isPresent() ? request.header("storeId").get() : "",
-							"client_token", request.header("client_token").isPresent() ? request.header("client_token").get() : "",
-							"client_type", request.header("client_type").isPresent() ? request.header("client_type").get() : "",
-							"deliveryType", request.header("deliveryType").isPresent() ? request.header("deliveryType").get() : "",
-							"userId", request.header("userId").isPresent() ? request.header("userId").get() : ""
-					));
-		} else {
-			addHeaders(requestBuilder,
-					Map.of("content-type", "application/json", aggregatorDataFetchDetail.getAuthKey(),
-							aggregatorDataFetchDetail.getAuthValue()));
-		}
+		addHeaders(requestBuilder, headerForPartner(aggregatorDataFetchDetail, request));
 		addQueryParams(requestBuilder, body);
 
 		logger.info("url is " + url.get());
@@ -92,6 +78,25 @@ public class PostService {
 
 	private void addHeaders(BoundRequestBuilder requestBuilder, Map<String, String> headers) {
 		headers.forEach(requestBuilder::addHeader);
+	}
+
+	private Map<String, String> headerForPartner(AggregatorDataFetchDetail aggregatorDataFetchDetail, Http.Request request) {
+		if (aggregatorDataFetchDetail.getVendorId() == 1190) {
+			return Map.of(
+					"content-type", "application/json",
+					aggregatorDataFetchDetail.getAuthKey(), aggregatorDataFetchDetail.getAuthValue(),
+					"storeId", request.header("storeId").isPresent() ? request.header("storeId").get() : "",
+					"client_token", request.header("client_token").isPresent() ? request.header("client_token").get() : "",
+					"client_type", request.header("client_type").isPresent() ? request.header("client_type").get() : "",
+					"deliveryType", request.header("deliveryType").isPresent() ? request.header("deliveryType").get() : "",
+					"userId", request.header("userId").isPresent() ? request.header("userId").get() : ""
+			);
+		} else {
+			return Map.of(
+					"content-type", "application/json",
+					aggregatorDataFetchDetail.getAuthKey(), aggregatorDataFetchDetail.getAuthValue()
+			);
+		}
 	}
 
 }
