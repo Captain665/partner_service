@@ -1,14 +1,11 @@
 package v2.partnerService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.GsonBuilder;
 import common.model.AggregatorDataFetchDetail;
 import common.resources.RequestResource;
-import common.response.StationOutletResponse;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.BoundRequestBuilder;
 import play.Logger;
-import play.libs.Json;
 
 import java.time.Duration;
 import java.util.Map;
@@ -49,6 +46,7 @@ public class PostService {
 								requestId,
 								response != null ? response.getStatusCode() : 0,
 								url.get());
+						logger.info("post service response : " + response.getResponseBody());
 						return Optional.empty();
 					}
 					try {
@@ -67,7 +65,6 @@ public class PostService {
 
 	private void addQueryParams(BoundRequestBuilder requestBuilder, Object body) {
 		if (body instanceof RequestResource requestResource) {
-			logger.info("query param is also running ");
 			requestBuilder.addQueryParam("stationCode", requestResource.getStationCode());
 			requestBuilder.addQueryParam("date", requestResource.getDate());
 			requestBuilder.addQueryParam("time", requestResource.getTime());
