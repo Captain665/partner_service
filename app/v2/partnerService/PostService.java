@@ -45,6 +45,8 @@ public class PostService {
 		}
 		addQueryParams(requestBuilder, body);
 
+		logger.info("url is " + url.get());
+
 		return requestBuilder
 				.setBody(jsonString)
 				.execute()
