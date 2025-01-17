@@ -2,6 +2,7 @@ package v2.cart;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import common.response.CartResponse;
+import common.response.DominosCartResponse;
 import jakarta.inject.Inject;
 import org.apache.commons.collections4.MapUtils;
 import play.Logger;
@@ -26,7 +27,7 @@ public class CartResourceHandler {
 		this.postService = postService;
 	}
 
-	public CompletionStage<CartResponse> cartValidateByPartner(Long partnerId, Http.Request request, Object body, Map<String, String> pathVariables) {
+	public CompletionStage<?> cartValidateByPartner(Long partnerId, Http.Request request, Object body, Map<String, String> pathVariables) {
 		return aggregatorDataFetchRepository.getData(partnerId)
 				.thenComposeAsync(aggregatorDataFetchDetail -> {
 					AtomicReference<String> url = new AtomicReference<>(aggregatorDataFetchDetail.getCartValidateUrl());
@@ -39,6 +40,9 @@ public class CartResourceHandler {
 							.thenApplyAsync(partnerResponse -> {
 								if (partnerResponse.isPresent()) {
 									try {
+										if (aggregatorDataFetchDetail.getVendorId() == 1190) {
+											return mapper.readValue(partnerResponse.get().toString(), DominosCartResponse.class);
+										}
 										return mapper.readValue(partnerResponse.get().toString(), CartResponse.class);
 									} catch (IOException e) {
 										return null;

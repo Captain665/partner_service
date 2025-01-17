@@ -37,7 +37,7 @@ public class OrderConfirmController {
 			return supplyAsync(() -> badRequest(Json.toJson("partnerName is required")));
 		}
 
-		return resourceHandler.orderConfirmByPartner(partnerId, request.id(), json)
+		return resourceHandler.orderConfirmByPartner(partnerId, request, json)
 				.thenApplyAsync(response -> {
 					if (response != null) {
 						logger.info("[" + request.id() + "] " + " response : " + response);
