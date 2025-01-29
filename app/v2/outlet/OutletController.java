@@ -1,5 +1,6 @@
 package v2.outlet;
 
+import common.resources.ApiResponse;
 import common.resources.RequestResource;
 import jakarta.inject.Inject;
 import play.Logger;
@@ -47,7 +48,7 @@ public class OutletController {
 							if (partnerResponse != null) {
 								return ok(Json.toJson(partnerResponse));
 							}
-							return badRequest(Json.toJson("oops, something went wrong"));
+							return badRequest(Json.toJson(new ApiResponse("oops, something went wrong")));
 						});
 
 	}

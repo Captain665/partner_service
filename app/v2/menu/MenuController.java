@@ -1,5 +1,6 @@
 package v2.menu;
 
+import common.resources.ApiResponse;
 import common.resources.RequestResource;
 import jakarta.inject.Inject;
 import play.Logger;
@@ -46,7 +47,7 @@ public class MenuController {
 					if (response != null) {
 						return ok(Json.toJson(response));
 					}
-					return badRequest(Json.toJson("oops something went wrong"));
+					return badRequest(Json.toJson(new ApiResponse("oops something went wrong")));
 				});
 	}
 }

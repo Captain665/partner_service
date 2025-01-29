@@ -1,6 +1,7 @@
 package v2.cart;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import common.resources.ApiResponse;
 import jakarta.inject.Inject;
 import play.Logger;
 import play.libs.Json;
@@ -49,7 +50,7 @@ public class CartController {
 								return ok(Json.toJson(response));
 							}
 							logger.info("[" + request.id() + "] " + " error : " + "oops something went wrong");
-							return badRequest(Json.toJson("oops something went wrong"));
+							return badRequest(Json.toJson(new ApiResponse("oops something went wrong")));
 						});
 
 

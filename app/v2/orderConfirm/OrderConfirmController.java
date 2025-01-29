@@ -1,6 +1,7 @@
 package v2.orderConfirm;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import common.resources.ApiResponse;
 import jakarta.inject.Inject;
 import play.Logger;
 import play.libs.Json;
@@ -46,7 +47,7 @@ public class OrderConfirmController {
 						return ok(Json.toJson(response));
 					}
 					logger.info("[" + request.id() + "] " + " error : " + "oops something went wrong");
-					return badRequest(Json.toJson("oops something went wrong"));
+					return badRequest(Json.toJson(new ApiResponse("oops something went wrong")));
 				});
 	}
 
