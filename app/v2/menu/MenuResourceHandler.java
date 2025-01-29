@@ -51,7 +51,7 @@ public class MenuResourceHandler {
 							return null;
 						});
 			} else if (requestType.equalsIgnoreCase("POST")) {
-				return postService.getInfo(request, aggregatorDataFetchDetail, requestResource, url, false)
+				return postService.getInfo(request, aggregatorDataFetchDetail, requestResource, url, false, null)
 						.thenApplyAsync(response -> {
 							if (response.isPresent()) {
 								try {

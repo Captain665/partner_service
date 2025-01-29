@@ -24,7 +24,7 @@ public class JPAAggregatorDataFetchRepository implements AggregatorDataFetchRepo
 	@Override
 	public CompletionStage<AggregatorDataFetchDetail> getData(Long vendorId) {
 		return supplyAsync(() -> wrap(em -> {
-			TypedQuery<AggregatorDataFetchDetail> query = em.createQuery("Select m from AggregatorDataFetchDetail m where vendorId = :vendorId", AggregatorDataFetchDetail.class)
+			TypedQuery<AggregatorDataFetchDetail> query = em.createQuery("Select m from AggregatorDataFetchDetail m where m.vendorId = :vendorId", AggregatorDataFetchDetail.class)
 					.setParameter("vendorId", vendorId);
 			return query.setMaxResults(1).getSingleResult();
 		}));

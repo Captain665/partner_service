@@ -43,11 +43,12 @@ public class GetService {
 								requestId,
 								response != null ? response.getStatusCode() : 0,
 								url.get());
+						logger.info("[{}] response is : {}", requestId, response.getResponseBody());
 						return Optional.empty();
 					}
 					try {
 						logger.info(
-								"[{}] Received outlet list Response: {} ", requestId,
+								"[{}] Received Aggregator Response: {} ", requestId,
 								response.getResponseBody());
 						return Optional.of(response.getResponseBody());
 					} catch (Exception e) {

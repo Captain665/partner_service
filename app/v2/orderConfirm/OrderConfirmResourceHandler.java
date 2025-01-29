@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import org.apache.commons.collections4.MapUtils;
 import play.mvc.Http;
 import v2.aggregatorDataFetch.AggregatorDataFetchRepository;
+import v2.cart.CartResourceHandler;
 import v2.partnerService.PostService;
 
 import java.io.IOException;
@@ -19,11 +20,13 @@ public class OrderConfirmResourceHandler {
 	private final AggregatorDataFetchRepository aggregatorDataFetchRepository;
 	private final PostService postService;
 	private final ObjectMapper mapper = new ObjectMapper();
+	private final CartResourceHandler cartResourceHandler;
 
 	@Inject
-	public OrderConfirmResourceHandler(AggregatorDataFetchRepository aggregatorDataFetchRepository, PostService postService) {
+	public OrderConfirmResourceHandler(AggregatorDataFetchRepository aggregatorDataFetchRepository, PostService postService, CartResourceHandler cartResourceHandler) {
 		this.aggregatorDataFetchRepository = aggregatorDataFetchRepository;
 		this.postService = postService;
+		this.cartResourceHandler = cartResourceHandler;
 	}
 
 
@@ -34,7 +37,9 @@ public class OrderConfirmResourceHandler {
 
 					AtomicReference<String> url = new AtomicReference<>(aggregatorDataFetchDetail.getOrderConfirmUrl());
 
-					return postService.getInfo(request, aggregatorDataFetchDetail, body, url, true)
+					return cartResourceHandler.getDominoRefreshToken(aggregatorDataFetchDetail, request.id())
+							.thenComposeAsync(refreshToken ->
+									postService.getInfo(request, aggregatorDataFetchDetail, body, url, true, refreshToken))
 							.thenApplyAsync(partnerResponse -> {
 								if (partnerResponse.isPresent()) {
 									try {

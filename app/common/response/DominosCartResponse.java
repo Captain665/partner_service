@@ -267,4 +267,35 @@ public class DominosCartResponse {
 	public void setDeliveryChargeDescription(String deliveryChargeDescription) {
 		this.deliveryChargeDescription = deliveryChargeDescription;
 	}
+
+	@Override
+	public String toString() {
+		return "DominosCartResponse{" +
+				"status='" + status + '\'' +
+				", cartId=" + cartId +
+				", invalidItems=" + invalidItems +
+				", validItems=" + validItems +
+				", price=" + price +
+				", discount=" + discount +
+				", netPrice=" + netPrice +
+				", netPriceWithAddCharge=" + netPriceWithAddCharge +
+				", tax=" + tax +
+				", priceScale=" + priceScale +
+				", priceRoundMode='" + priceRoundMode + '\'' +
+				", taxes=" + taxes +
+				", taxAmount=" + taxAmount +
+				", deliveryCharge=" + deliveryCharge +
+				", cartAddChargeDTO=" + cartAddChargeDTO +
+				", priceWithoutDiscount=" + priceWithoutDiscount +
+				", taxWithoutDiscount=" + taxWithoutDiscount +
+				", totalPriceWithoutDiscount=" + totalPriceWithoutDiscount +
+				", nextGenFlagEnabled=" + nextGenFlagEnabled +
+				", comboMapping=" + comboMapping +
+				", displayPriceWithoutDiscount=" + displayPriceWithoutDiscount +
+				", displayNetPrice=" + displayNetPrice +
+				", displayNetPriceWithAddCharges=" + displayNetPriceWithAddCharges +
+				", deliveryCharges=" + deliveryCharges +
+				", deliveryChargeDescription='" + deliveryChargeDescription + '\'' +
+				'}';
+	}
 }

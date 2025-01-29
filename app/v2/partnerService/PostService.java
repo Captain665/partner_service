@@ -19,19 +19,18 @@ import static org.asynchttpclient.Dsl.*;
 public class PostService {
 
 	private final Logger.ALogger logger = Logger.of("v2.partnerService.postService");
-	private final AsyncHttpClient httpClient = asyncHttpClient(config().setRequestTimeout(Duration.ofMillis(5000)));
+	private final AsyncHttpClient httpClient = asyncHttpClient(config().setRequestTimeout(Duration.ofMillis(15000)));
 
-	public CompletionStage<Optional<?>> getInfo(Http.Request request, AggregatorDataFetchDetail aggregatorDataFetchDetail, Object body, AtomicReference<String> url, Boolean isJson) {
+	public CompletionStage<Optional<?>> getInfo(Http.Request request, AggregatorDataFetchDetail aggregatorDataFetchDetail, Object body, AtomicReference<String> url, Boolean isJson, Optional<String> refreshToken) {
 		BoundRequestBuilder requestBuilder = null;
 
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		String jsonString = isJson ? body.toString() : gsonBuilder.create().toJson(body);
 		requestBuilder = httpClient.preparePost(url.get());
 
-		addHeaders(requestBuilder, headerForPartner(aggregatorDataFetchDetail, request));
+		addHeaders(requestBuilder, headerForPartner(aggregatorDataFetchDetail, request, refreshToken));
 		addQueryParams(requestBuilder, body);
 
-		logger.info("url is " + url.get());
 
 		return requestBuilder
 				.setBody(jsonString)
@@ -42,13 +41,13 @@ public class PostService {
 					logger.info("exception " + throwable);
 					return null;
 				}).thenApplyAsync(response -> {
-					logger.info("response " + response);
 					if ((response == null || response.getStatusCode() >= 400) && aggregatorDataFetchDetail.getVendorId() != 1190) {
 						logger.info(
 								"[{}] Got failure response from Aggregator API with status code {} for url {}",
 								request.id(),
 								response != null ? response.getStatusCode() : 0,
 								url.get());
+						logger.info("[{}] failure response is : {}", request.id(), response.getResponseBody());
 						return Optional.empty();
 					}
 					try {
@@ -80,13 +79,14 @@ public class PostService {
 		headers.forEach(requestBuilder::addHeader);
 	}
 
-	private Map<String, String> headerForPartner(AggregatorDataFetchDetail aggregatorDataFetchDetail, Http.Request request) {
+	private Map<String, String> headerForPartner(AggregatorDataFetchDetail aggregatorDataFetchDetail, Http.Request request, Optional<String> refreshToken) {
 		if (aggregatorDataFetchDetail.getVendorId() == 1190) {
+
 			return Map.of(
 					"content-type", "application/json",
 					aggregatorDataFetchDetail.getAuthKey(), aggregatorDataFetchDetail.getAuthValue(),
 					"storeId", request.header("storeId").isPresent() ? request.header("storeId").get() : "",
-					"client_token", request.header("client_token").isPresent() ? request.header("client_token").get() : "",
+					"client_token", refreshToken.orElse(null),
 					"client_type", request.header("client_type").isPresent() ? request.header("client_type").get() : "",
 					"deliveryType", request.header("deliveryType").isPresent() ? request.header("deliveryType").get() : "",
 					"userId", request.header("userId").isPresent() ? request.header("userId").get() : ""
